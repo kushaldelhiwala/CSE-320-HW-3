@@ -1,8 +1,11 @@
 // Shell 
+// Used https://brennan.io/2015/01/16/write-a-shell-in-c/ for the fork part
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 int main (int argc, char** argv)
 {
@@ -17,7 +20,10 @@ int main (int argc, char** argv)
 	char* found;
 	int i = 0;
 	char *array[100];
-	char *envp[] = {(char*)"PATH=/bin", 0};
+	char *envp[] = {(char*)"PATH=/", 0};
+	pid_t pid;
+	pid_t wpid;
+	int status;
 
 	do{
 		i = 0;
@@ -27,6 +33,8 @@ int main (int argc, char** argv)
 
 		if(strcmp(input_line, "exit") == 0){
 			exit_status = 1;
+			exit(0);
+			printf("Exit\n");
 		}
 
 		found = strtok(input_line, " ");
@@ -34,28 +42,24 @@ int main (int argc, char** argv)
 			array[i++] = strdup(found);
 			found = strtok(NULL," ");
 		}
-		strcpy(command, array[0]);
+		array[i] = NULL;
 
-		if (i>1){
-			for(int j = 0; j<i; j++)
-				parameters[j] = array[j+1];
-			parameters[i] = NULL;
+		pid = fork();
+  		
+		if (pid == 0) {
+    			// Child process
+    			if (execvp(array[0], array) == -1) {
+      				perror("lsh");
+    			}
+    			exit(EXIT_FAILURE);
+  		}
+		else if(pid < 0){
+			printf("Error forking\n");
 		}
-		
 		else{
-			parameters[0] = NULL;
-		}
-
-		if(fork() != 0){
-			wait(NULL);
-		}
-		else {
-			printf("Array[0]: %s\n", array[0]);
-			printf("Command: %s\n", command);
-			printf("Parameters[0]: %s\n", parameters[0]);
-			strcpy(cmd, "/bin/");
-			strcat(cmd, command);
-			execve(cmd, parameters, envp);
+			do {
+      				wpid = waitpid(pid, &status, WUNTRACED);
+     			} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		}
 
 	} while (exit_status == 0);
