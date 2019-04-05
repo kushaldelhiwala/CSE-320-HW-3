@@ -3,14 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <zconf.h>
 #include <signal.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 int main (int argc, char** argv)
 {
 	int exit_status = 0;
 	char input_line[255];
 	pid_t pid;
+	pid_t wpid;
+	int status;
 	
 	do{
 		printf("shell> ");
@@ -23,13 +26,25 @@ int main (int argc, char** argv)
 		}
 
 		else if (strcmp(input_line, "run") == 0){
-			if ((pid = fork()) == 0){
-				char* args[] = {./hw_2/hw3_3_child, NULL};
-				execve("./hw_2/hw3_3_child",args);
+			pid = fork();
+
+			if (pid == 0){
+				signal(SIGINT,SIG_IGN);
+				char* args[] = {"./child", NULL};
+				if (execvp(args[0], args) == -1){
+					printf("Failed to execute null\n");
+				}
+				exit(EXIT_FAILURE);
+			}
+			
+			else if (pid < 0){
+				printf("Error forking.\n");
 			}
 			else{
-				signal(SIGINT,SIG_IGN);
-				wait(NULL);
+				do {
+                               		 wpid = waitpid(pid, &status, WUNTRACED);
+                         	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+
 			}				
 
 		}
@@ -38,6 +53,6 @@ int main (int argc, char** argv)
 			printf("Please enter a correct command\n");
 		}
 
-	} while(exit_status == 0)
+	} while(exit_status == 0);
 
 }

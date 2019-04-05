@@ -1,5 +1,5 @@
 // Shell 
-// Used https://brennan.io/2015/01/16/write-a-shell-in-c/ for the fork part
+// Used some code from  https://brennan.io/2015/01/16/write-a-shell-in-c/ for the waiting part
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +49,7 @@ int main (int argc, char** argv)
 		if (pid == 0) {
     			// Child process
     			if (execvp(array[0], array) == -1) {
-      				perror("lsh");
+      				printf("Failed to execute %s\n", array[0]);
     			}
     			exit(EXIT_FAILURE);
   		}

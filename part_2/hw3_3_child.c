@@ -3,16 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 int main (int argc, char** argv)
 {
 	signal(SIGINT,SIG_DFL);
 
 	sigset_t mask, prev_mask;
-	Sigemptyset(&mask);
-	Sigaddset(&mask, SIGINT);	
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGINT);	
 	
-	Sigprocmask(SIG_BLOCK, &mask, &prev_mask);
+	sigprocmask(SIG_BLOCK, &mask, &prev_mask);
 	
 	printf("1\n");
 	sleep(1);
@@ -24,14 +25,12 @@ int main (int argc, char** argv)
 	sleep(1);
 	printf("5\n");
 	
-	Sigprocmask(SIG_SETMASK, &prev_mask, NULL);
+	sigprocmask(SIG_SETMASK, &prev_mask, NULL);
 
 	printf("6\n");
 	sleep(1);
 	printf("7\n");
 	sleep(1);	
-	printf("8\n");
-	sleep(1);
 	printf("8\n");
 	sleep(1);
 	printf("9\n");
