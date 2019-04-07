@@ -1,8 +1,11 @@
 //Read number from command line, find the last digit of that fibonacci number 
 #include <stdio.h>
 #include <stdlib.h>
-#include <zconf.h>
 #include <math.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 int calculate_fibonacci(int n);
 void handler(int sig);
@@ -15,17 +18,17 @@ int main (int argc, char** argv)
 {
   int input_num = 0;
   long long fibonacci_input = 0;
-  
-  if (argc > 2){
-    printf("Error, cannot have multiple arguments\n");
-    exit(-1);
+ 
+  if (argc != 2){
+	printf("Enter arguments correctly\n");
+	exit(-1);
   }
-
   char* arg_i = *(argv+1);
   input_num = atoi(arg_i);
   signal(SIGCHLD, handler);
   
   if ((pid = fork()) == 0){
+    input_num = input_num % 60;
     fibonacci_input = calculate_fibonacci(input_num);
     fib_last = fibonacci_input % 10;
     exit(fib_last);

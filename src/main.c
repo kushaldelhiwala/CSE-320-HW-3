@@ -40,15 +40,15 @@ int main(void) {
 		printf("Array[0]: %s\n", array[0]);
 
 		if (strcmp(input_line, "help")==0){
-			printf("Here are the functions of the various commands\n");
-			printf("Date: Prints out the current date/time\n");
-			printf("Hire: You can hire artists\n");
-			printf("Fire: You can fire artists\n");
-			printf("FireAll: You can fire all artists\n");
-			printf("Assign: Assign a job to artists\n");
-			printf("Withdraw: Withdraw a job to artists\n");
-			printf("List: List all the artists PIDs\n");
-			printf("Exit: Exit the program\n");
+			cse320_print("Here are the functions of the various commands\n");
+			cse320_print("Date: Prints out the current date/time\n");
+			cse320_print("Hire: You can hire artists\n");
+			cse320_print("Fire: You can fire artists\n");
+			cse320_print("FireAll: You can fire all artists\n");
+			cse320_print("Assign: Assign a job to artists\n");
+			cse320_print("Withdraw: Withdraw a job to artists\n");
+			cse320_print("List: List all the artists PIDs\n");
+			cse320_print("Exit: Exit the program\n");
 		}	
 		else if(strcmp(array[0], "date")==0){
 			pid_t pid;
@@ -63,12 +63,12 @@ int main(void) {
 			
 			if (pid == 0) {
                        		 if (execvp(args[0], args) == -1) {
-                               		 printf("Failed to execute date\n");
+                               		 cse320_print("Failed to execute date\n");
                         	 }	
                        		 exit(EXIT_FAILURE);
                 	}
                 	else if(pid < 0){
-                        	printf("Error forking\n");
+                        	cse320_print("Error forking\n");
                 	}
                 	else{
                         	do {
@@ -79,15 +79,13 @@ int main(void) {
 		}	
 		else if(strcmp(array[0], "hire")==0){
 			int num_of_processes = 0;
-			//printf("Input Line: %s\n", input_line);
 			sscanf(input_line, "%*s %d", &num_of_processes);
-			//printf("Num of Processes: %d\n", num_of_processes);
 			int i = 0;
 			pid_t pid;
 			
 			for (int i = 0; i < num_of_processes; i++){
 				pid = fork();
-				if (pid < 0){printf("Error in forking\n");}
+				if (pid < 0){cse320_print("Error in forking\n");}
 				else if (pid == 0){
 					signal(SIGUSR1, handler1);
 					signal(SIGUSR2, handler2);
@@ -133,7 +131,7 @@ int main(void) {
 			}
 			
 			else{
-				printf("Match not found for ID\n");
+				cse320_print("Match not found for ID\n");
 			}
 			
 		}
@@ -157,7 +155,6 @@ int main(void) {
 		}
 		else if(strcmp(array[0], "assign")==0){
 			sscanf(input_line, "%*s %d", &assign_id);
-			//printf("Assign PID: %d\n", assign_id);
 			int match_found = 0;
 			int already_assigned = 0;
 
@@ -178,15 +175,14 @@ int main(void) {
 
 				kill(assign_id, SIGUSR1);
 				sleep(1);
-				//printf("ARIST %d IS ASSIGNED TO A JOB\n", assign_id);
 			}
 		
 			else if (match_found == 1 && already_assigned == 1){
-				printf("Artist has already been assigned job\n");
+				cse320_print("Artist has already been assigned job\n");
 			}
 			
 			else{
-				printf("Artist ID not found\n");
+				cse320_print("Artist ID not found\n");
 			}
 		
 		}	
@@ -212,11 +208,10 @@ int main(void) {
 			if(match_found == 1 && never_assigned == 1){
 				kill(withdraw_id, SIGUSR2);
 				sleep(1);
-				//printf("ARTIST %d IS WITHDRAWN FROM JOB\n", withdraw_id);
 			}
 			
 			else{
-				printf("Match not found for ID, or Artist has never been assigned a job\n");
+				cse320_print("Match not found for ID, or Artist has never been assigned a job\n");
 			}
 		}
 		else if(strcmp(array[0], "list")==0){
@@ -225,7 +220,9 @@ int main(void) {
 			for (int i = 0; i < pos; i++){
 				has_assignment = 0;
 				if (child_pid[i] > 0){
-					printf("%d\t", child_pid[i]);
+					char buffer3[255];
+					sprintf(buffer3, "%d\t", child_pid[i]);
+					cse320_print(buffer3);
 				}
 				if (child_pid[i] >0){
 					for (int j = 0; j < assigned_counter; j++){
@@ -235,20 +232,37 @@ int main(void) {
 					}
 				
 					if (has_assignment == 0){
-						printf("WAITING\n");
+						cse320_print("WAITING\n");
 					}	
 				
 					else{
-						printf("ASSIGNED\n");
+						cse320_print("ASSIGNED\n");
 					}
 				}
 			}
 		}
 		else if(strcmp(array[0], "exit")==0){
+			int has_assignment = 0;
+                        for (int k = 0; k < pos; k++){
+                                if(child_pid[k] > 0){
+                                        for (int j = 0; j < assigned_counter; j++){
+                                                if (child_pid[k] == assigned_processes[j]){
+                                                        kill(child_pid[k], SIGUSR2);
+                                                        sleep(1);
+                                                }       
+                                        
+                                        }       
+                                        kill(child_pid[k], SIGTERM);
+                                        child_pid[k] = 0;
+                                        wait(NULL);
+                                }
+                                
+                        }
+                
 			exit_flag = 1;
 		}
 		else{
-			printf("Please enter a valid command\n");
+			cse320_print("Please enter a valid command\n");
 		}
 	
 	} while(exit_flag==0);

@@ -8,10 +8,10 @@ sigblock:
 	gcc part_2/hw3_3_child.c -o child
 
 fib:
-	gcc part_2/hw3_1.c -o fib
+	gcc part_2/hw3_1.c -o fib -lm
 
 sshell:
 	gcc part_2/hw3_2.c -o simple_shell
 
 clean:
-	rm a.out
+	rm fib simple_shell shell child artist_manager
