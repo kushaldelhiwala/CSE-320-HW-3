@@ -26,7 +26,7 @@ int main (int argc, char** argv)
   signal(SIGCHLD, handler);
   
   if ((pid = fork()) == 0){
-th    fibonacci_input = calculate_fibonacci(input_num);
+    fibonacci_input = calculate_fibonacci(input_num);
     fib_last = fibonacci_input % 10;
     exit(fib_last);
   }
