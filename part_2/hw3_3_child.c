@@ -24,6 +24,7 @@ int main (int argc, char** argv)
 	printf("4\n");
 	sleep(1);
 	printf("5\n");
+	sleep(1);
 	
 	sigprocmask(SIG_SETMASK, &prev_mask, NULL);
 

@@ -38,7 +38,6 @@ int main(void) {
 		found = strtok(input_find, " ");
 		array[0] = strdup(found);
 		array[1] = NULL;
-		printf("Array[0]: %s\n", array[0]);
 
 		if (strcmp(input_line, "help")==0){
 			cse320_print("Here are the functions of the various commands\n");
@@ -95,7 +94,6 @@ int main(void) {
 				else{
 					signal(SIGCHLD, handler3);
 					child_pid[pos] = pid;
-					printf("Child Pos[i]: %d\n", pid);
 					pos++;
 				}
 			}	
@@ -104,7 +102,6 @@ int main(void) {
 		else if(strcmp(array[0], "fire")==0){
 			pid_t terminate_pid = 0;
 			sscanf(input_line, "%*s %d", &terminate_pid);
-			printf("Terminate PID: %d\n", terminate_pid);
 			int k = 0;
 			int match_found = 0;
 			int has_assignment = 0;
@@ -190,7 +187,6 @@ int main(void) {
 		}	
 		else if(strcmp(array[0], "withdraw")==0){
 			sscanf(input_line, "%*s %d", &withdraw_id);
-			printf("Withdraw PID: %d\n", withdraw_id);
 			int match_found = 0;
 			int never_assigned = 0;
 	

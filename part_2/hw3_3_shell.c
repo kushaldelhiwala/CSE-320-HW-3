@@ -14,6 +14,7 @@ int main (int argc, char** argv)
 	pid_t pid;
 	pid_t wpid;
 	int status;
+	//signal(SIGINT, SIG_IGN);
 
 	do{
 		printf("shell> ");
@@ -41,6 +42,7 @@ int main (int argc, char** argv)
 				printf("Error forking.\n");
 			}
 			else{
+				signal(SIGINT, SIG_IGN);
 				do {
                                		 wpid = waitpid(pid, &status, WUNTRACED);
                          	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
