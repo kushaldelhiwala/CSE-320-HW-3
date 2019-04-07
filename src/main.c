@@ -8,25 +8,26 @@
 
 pid_t assign_id = -1;
 pid_t withdraw_id = -1;
+pid_t child_pid[500];
+pid_t assigned_processes[500];
+int pos = 0;
+int assigned_counter = 0;
 void handler1(int sig);
 void handler2(int sig);
+void handler3(int sig);
 void cse320_print(char* message);
 
 int main(void) {
-	//char* msg = "Hello, world!\n";
-    	//cse320_print(msg);
-	
 	int exit_flag = 0;
 	char input_line[255];
-	pid_t child_pid[500];
-	pid_t assigned_processes[500];
-	int assigned_counter = 0;
-	int pos = 0;
+	//pid_t child_pid[500];
+	//pid_t assigned_processes[500];
+	//int assigned_counter = 0;
+	//int pos = 0;
 	char* found;
 	char* array[100];
 	char command[255];
 	char input_find[255];
-	//pid_t assign_id = -1;
 
 	do{
 		printf("shell> ");
@@ -92,6 +93,7 @@ int main(void) {
 					while(1);
 				}
 				else{
+					signal(SIGCHLD, handler3);
 					child_pid[pos] = pid;
 					printf("Child Pos[i]: %d\n", pid);
 					pos++;
@@ -282,4 +284,25 @@ void handler2(int sig){
 	char buffer2[255];
 	sprintf(buffer2, "ARTIST %d IS WITHDRAWN FROM A JOB\n", getpid());
 	cse320_print(buffer2);
+}
+
+void handler3(int sig){
+	int status;
+	pid_t temp = waitpid(-1, &status, WNOHANG);
+	while (temp > 0){
+		if (WIFEXITED(status) == 0){
+			for (int j = 0; j < pos; j++){
+				if (child_pid[j] == temp){
+					child_pid[j] = 0;
+				}
+			}
+			
+			for (int k = 0; k < assigned_counter; k++){
+				if (assigned_processes[k] == temp){
+					assigned_processes[k] = 0;
+				}
+			}
+			break;
+		}	
+	}
 }

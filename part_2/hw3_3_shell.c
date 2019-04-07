@@ -14,7 +14,7 @@ int main (int argc, char** argv)
 	pid_t pid;
 	pid_t wpid;
 	int status;
-	
+
 	do{
 		printf("shell> ");
 		fgets(input_line, 255, stdin);
@@ -32,7 +32,7 @@ int main (int argc, char** argv)
 				signal(SIGINT,SIG_IGN);
 				char* args[] = {"./child", NULL};
 				if (execvp(args[0], args) == -1){
-					printf("Failed to execute null\n");
+					printf("Failed to execute run\n");
 				}
 				exit(EXIT_FAILURE);
 			}
@@ -44,7 +44,6 @@ int main (int argc, char** argv)
 				do {
                                		 wpid = waitpid(pid, &status, WUNTRACED);
                          	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-
 			}				
 
 		}

@@ -1,7 +1,7 @@
 all: main.x
 
 main.x:
-	gcc src/main.c src/defs.c -I./inc -o artist_manager
+	gcc -g src/main.c src/defs.c -I./inc -o artist_manager
 
 sigblock:
 	gcc part_2/hw3_3_shell.c -o shell
