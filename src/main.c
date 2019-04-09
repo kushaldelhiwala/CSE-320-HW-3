@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "../inc/data.h"
+#include "data.h"
 
 pid_t assign_id = -1;
 pid_t withdraw_id = -1;
@@ -64,12 +64,12 @@ int main(void) {
 			
 			if (pid == 0) {
                        		 if (execvp(args[0], args) == -1) {
-                               		 cse320_print("Failed to execute date\n");
+                               		 fprintf(stderr,"Failed to execute date\n");
                         	 }	
                        		 exit(EXIT_FAILURE);
                 	}
                 	else if(pid < 0){
-                        	cse320_print("Error forking\n");
+                        	fprintf(stderr,"Error forking\n");
                 	}
                 	else{
                         	do {
@@ -86,7 +86,7 @@ int main(void) {
 			
 			for (int i = 0; i < num_of_processes; i++){
 				pid = fork();
-				if (pid < 0){cse320_print("Error in forking\n");}
+				if (pid < 0){fprintf(stderr,"Error in forking\n");}
 				else if (pid == 0){
 					signal(SIGUSR1, handler1);
 					signal(SIGUSR2, handler2);
@@ -132,7 +132,7 @@ int main(void) {
 			}
 			
 			else{
-				cse320_print("Match not found for ID\n");
+				fprintf(stderr,"Match not found for ID\n");
 			}
 			
 		}
@@ -181,11 +181,11 @@ int main(void) {
 			}
 		
 			else if (match_found == 1 && already_assigned == 1){
-				cse320_print("Artist has already been assigned job\n");
+				fprintf(stderr,"Artist has already been assigned job\n");
 			}
 			
 			else{
-				cse320_print("Artist ID not found\n");
+				fprintf(stderr,"Artist ID not found\n");
 			}
 		
 		}	
@@ -214,7 +214,7 @@ int main(void) {
 			}
 			
 			else{
-				cse320_print("Match not found for ID, or Artist has never been assigned a job\n");
+				fprintf(stderr,"Match not found for ID, or Artist has never been assigned a job\n");
 			}
 		}
 		else if(strcmp(array[0], "list")==0){
@@ -266,7 +266,7 @@ int main(void) {
 			exit_flag = 1;
 		}
 		else{
-			cse320_print("Please enter a valid command\n");
+			fprintf(stderr,"Please enter a valid command\n");
 		}
 	
 	} while(exit_flag==0);

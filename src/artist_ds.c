@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "../inc/data.h"
+#include "data.h"
 
 void hire (pid_t transfer_pid){
 	child_pid[pos] = transfer_pid;
