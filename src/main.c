@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include "../inc/data.h"
 
 pid_t assign_id = -1;
 pid_t withdraw_id = -1;
@@ -16,14 +17,14 @@ void handler1(int sig);
 void handler2(int sig);
 void handler3(int sig);
 void cse320_print(char* message);
+void hire(pid_t transfer_pid);
+void fire (int transfer_k);
+void assign (pid_t transfer_pid);
+void withdraw(int transfer_k);
 
 int main(void) {
 	int exit_flag = 0;
 	char input_line[255];
-	//pid_t child_pid[500];
-	//pid_t assigned_processes[500];
-	//int assigned_counter = 0;
-	//int pos = 0;
 	char* found;
 	char* array[100];
 	char command[255];
@@ -93,8 +94,9 @@ int main(void) {
 				}
 				else{
 					signal(SIGCHLD, handler3);
-					child_pid[pos] = pid;
-					pos++;
+					//child_pid[pos] = pid;	
+					//pos++;
+					hire(pid);
 				}
 			}	
 			
@@ -102,14 +104,14 @@ int main(void) {
 		else if(strcmp(array[0], "fire")==0){
 			pid_t terminate_pid = 0;
 			sscanf(input_line, "%*s %d", &terminate_pid);
-			int k = 0;
 			int match_found = 0;
 			int has_assignment = 0;
 			
-			for (k = 0; k < pos; k++){
+			for (int k = 0; k < pos; k++){
 				if (child_pid[k] == terminate_pid){
 					match_found = 1;
-					child_pid[k] = 0;
+					//child_pid[k] = 0;
+					fire(k);
 				}
 			}
 		
@@ -146,7 +148,8 @@ int main(void) {
 					
 					}	
 					kill(child_pid[k], SIGTERM);
-					child_pid[k] = 0;
+					//child_pid[k] = 0;
+					fire(k);
 					wait(NULL);
 				}
 				
@@ -169,8 +172,9 @@ int main(void) {
 				}
 			}			
 			if (match_found == 1 && already_assigned == 0){
-				assigned_processes[assigned_counter] = assign_id;
-				assigned_counter++;
+				//assigned_processes[assigned_counter] = assign_id;
+				//assigned_counter++;
+				assign(assign_id);
 
 				kill(assign_id, SIGUSR1);
 				sleep(1);
@@ -199,7 +203,8 @@ int main(void) {
 			for (int k = 0; k < assigned_counter; k++){
 				if (assigned_processes[k] == withdraw_id){
 					never_assigned = 1;
-					assigned_processes[k] = 0;
+					//assigned_processes[k] = 0;
+					withdraw(k);
 				}
 			}
 			
@@ -251,7 +256,8 @@ int main(void) {
                                         
                                         }       
                                         kill(child_pid[k], SIGTERM);
-                                        child_pid[k] = 0;
+					fire(k);
+                                        //child_pid[k] = 0;
                                         wait(NULL);
                                 }
                                 
@@ -289,13 +295,15 @@ void handler3(int sig){
 		if (WIFEXITED(status) == 0){
 			for (int j = 0; j < pos; j++){
 				if (child_pid[j] == temp){
-					child_pid[j] = 0;
+					//child_pid[j] = 0;
+					fire(j);
 				}
 			}
 			
 			for (int k = 0; k < assigned_counter; k++){
 				if (assigned_processes[k] == temp){
-					assigned_processes[k] = 0;
+					//assigned_processes[k] = 0;
+					withdraw(k);
 				}
 			}
 			break;
