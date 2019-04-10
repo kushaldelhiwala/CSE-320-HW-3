@@ -83,7 +83,7 @@ int main(void) {
 	
 		}	
 		else if(strcmp(array[0], "hire")==0){
-			int num_of_processes;
+			int num_of_processes = 0;
 			sscanf(input_line, "%*s %d", &num_of_processes);
 			int i = 0;
 			pid_t pid;
