@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "data.h"
+#include "ctype.h"
 
 pid_t assign_id = -1;
 pid_t withdraw_id = -1;
@@ -21,6 +22,8 @@ void hire(pid_t transfer_pid);
 void fire (int transfer_k);
 void assign (pid_t transfer_pid);
 void withdraw(int transfer_k);
+char *strlwr(char *str);
+
 
 int main(void) {
 	int exit_flag = 0;
@@ -39,8 +42,9 @@ int main(void) {
 		found = strtok(input_find, " ");
 		array[0] = strdup(found);
 		array[1] = NULL;
-
-		if (strcmp(input_line, "help")==0){
+		array[0] = strlwr(array[0]);	
+	
+		if (strcmp(array[0], "help")==0){
 			cse320_print("Here are the functions of the various commands\n");
 			cse320_print("Date: Prints out the current date/time\n");
 			cse320_print("Hire: You can hire artists\n");
@@ -79,7 +83,7 @@ int main(void) {
 	
 		}	
 		else if(strcmp(array[0], "hire")==0){
-			int num_of_processes = 0;
+			int num_of_processes;
 			sscanf(input_line, "%*s %d", &num_of_processes);
 			int i = 0;
 			pid_t pid;
@@ -309,4 +313,15 @@ void handler3(int sig){
 			break;
 		}	
 	}
+}
+
+char *strlwr(char *str){
+  unsigned char *p = (unsigned char *)str;
+
+  while (*p) {
+     *p = tolower((unsigned char)*p);
+      p++;
+  }
+
+  return str;
 }
